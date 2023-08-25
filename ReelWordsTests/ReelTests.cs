@@ -1,4 +1,5 @@
-﻿using ReelWords;
+﻿using System.Collections.Generic;
+using ReelWords;
 using Xunit;
 
 namespace ReelWordsTests
@@ -19,7 +20,7 @@ namespace ReelWordsTests
         public void ReelInsertTest()
         {
             Reel reel = Reel.Instance;
-            reel.Insert(SAMPLE_REEL);
+            reel.InsertReel(SAMPLE_REEL);
             Assert.True(reel.GetCurrentLetters().Equals(SAMPLE_LETTER));
         }
 
@@ -27,8 +28,8 @@ namespace ReelWordsTests
         public void ReelInsertMultipleTest()
         {
             Reel reel = Reel.Instance;
-            reel.Insert(SAMPLE_REEL);
-            reel.Insert(SAMPLE_REEL2);
+            reel.InsertReel(SAMPLE_REEL);
+            reel.InsertReel(SAMPLE_REEL2);
             Assert.True(reel.GetCurrentLetters().Equals(SAMPLE_LETTERS));
         }
 
@@ -36,9 +37,8 @@ namespace ReelWordsTests
         public void ReelIncrementationTest()
         {
             Reel reel = Reel.Instance;
-            reel.Insert(SAMPLE_REEL);
-            int[] submissal = {1, 4, 5, 6}; // User submitted "deal"
-            reel.IncrementIndices(submissal); 
+            reel.InsertReel(SAMPLE_REEL);
+            reel.IncrementIndices(new List<int> { 1, 4, 5, 6 });
             Assert.True(reel.GetCurrentLetters().Equals(SAMPLE_REEL3));
         }
     }

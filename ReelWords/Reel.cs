@@ -7,10 +7,12 @@ namespace ReelWords
 	{
         public bool randomizeIndices = true;
         private static Reel instance = null;
+        private Dictionary<char, int> letterScores = null;
         private List<Letter[]> reelsLetters;
         private List<int> reelsIndices;
 
         private Reel() {
+            letterScores = new Dictionary<char, int>();
             reelsLetters = new List<Letter[]>();
             reelsIndices = new List<int>();
         }
@@ -25,20 +27,26 @@ namespace ReelWords
             }
         }
 
-        public void Insert(string s)
+        public void InsertReel(string s)
         {
             string[] entries = s.Split();
             Letter[] letters = new Letter[entries.Length];
 
             for (int i = 0; i < letters.Length; i++) {
                 if (char.IsLetter(entries[i][0]))
-                    letters[i] = new Letter(entries[i][0], reelsLetters.Count);
+                    letters[i] = new Letter(entries[i][0], reelsLetters.Count, letterScores[entries[i][0]]);
             }
 
             reelsLetters.Add(letters);
 
             int initialIndex = randomizeIndices ? new Random().Next(0, letters.Length) : 0;
             reelsIndices.Add(initialIndex);
+        }
+
+        public void InsertLetterScore(string s)
+        {
+            string[] letterAndScore = s.Split();
+            letterScores[char.Parse(letterAndScore[0])] = Int32.Parse(letterAndScore[1]);
         }
 
         public Letter[] GetCurrentLetters() {
@@ -54,6 +62,14 @@ namespace ReelWords
                 reelsIndices[index] = (reelsIndices[index] + 1)
                     % reelsLetters[index].Length;
             }
+        }
+
+        public int calculatePointsGained(List<int> indices)
+        {
+            int sum = 0;
+            foreach (var index in indices)
+                sum += reelsLetters[index][reelsIndices[index]].pointValue;
+            return sum;
         }
     }
 }

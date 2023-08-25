@@ -8,8 +8,11 @@ namespace ReelWords
     public static class Program
     {
         public const string DICT_PATH = "Resources/american-english-large.txt";
-        public const string REELS_PATH = "Resources/reels.txt";
         public const string SCORES_PATH = "Resources/scores.txt";
+        public const string REELS_PATH = "Resources/reels.txt";
+        public const string EXTENDED_REELS_PATH = "Resources/extended-reels.txt";
+        
+        private static int totalScore = 0;
 
         static void Main(string[] args)
         {
@@ -48,8 +51,12 @@ namespace ReelWords
                     Console.Out.WriteLine("[X] That's not an accepted word!");
                     continue;
                 }
-                // TODO: Calculate score
-                Console.Out.WriteLine("Nice work! You gain X points. The current total is Y.");
+    
+                int pointsGained = reel.calculatePointsGained(indexMatches);
+                totalScore += pointsGained;
+                Console.Out.WriteLine("Nice work! You gained " + pointsGained + " points. " +
+                    "Your total score is now " + totalScore + ".");
+
                 reel.IncrementIndices(indexMatches);
             }
         }
@@ -85,12 +92,19 @@ namespace ReelWords
                 Trie.Instance.Insert(line);
             }
 
+            // Ingest the scores
+            var scoreLines = File.ReadLines(SCORES_PATH);
+            foreach (var line in scoreLines)
+            {
+                Reel.Instance.InsertLetterScore(line);
+            }
+
             // Ingest the reels
             var reelLines = File.ReadLines(REELS_PATH);
             foreach (var line in reelLines)
             {
-                Reel.Instance.Insert(line);
-            }
+                Reel.Instance.InsertReel(line);
+            }      
         }
     }
 }
