@@ -1,9 +1,14 @@
 ﻿using System;
+using System.IO;
 
 namespace ReelWords
 {
     public static class Program
     {
+        public const string DictPath = "Resources/american-english-large.txt";
+        public const string ReelsPath = "Resources/reels.txt";
+        public const string ScoresPath = "Resources/scores.txt";
+
         static void Main(string[] args)
         {
             bool playing = true;
@@ -12,9 +17,12 @@ namespace ReelWords
             Trie trie = Trie.Instance;
 
             // Ingest word dictionary from file and store in the trie
+            var lines = File.ReadLines(DictPath);
+            foreach (var line in lines) {
+                trie.Insert(line);
+            }
 
-
-
+            Console.Out.WriteLine("Trie filled!");
 
             while (playing)
             {

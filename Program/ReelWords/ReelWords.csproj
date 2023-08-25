@@ -5,4 +5,15 @@
         <TargetFramework>net6.0</TargetFramework>
     </PropertyGroup>
 
+    <ItemGroup>
+      <None Update="Resources\american-english-large.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Resources\reels.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Resources\scores.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
 </Project>

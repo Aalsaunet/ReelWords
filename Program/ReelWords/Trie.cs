@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ReelWords
+﻿namespace ReelWords
 {
     public class Trie
     {
@@ -25,29 +23,48 @@ namespace ReelWords
         public void Insert(string s)
         {
             var currentNode = root;
-
             foreach (var c in s)
             {
                 var child = currentNode.FindChildNode(c);
-
                 if (child == null)
                 {
                     child = new Node(c, currentNode);
                     currentNode.children.Add(child);
                 }
-
                 currentNode = child;
             }
         }
 
         public bool Search(string s)
         {
-            throw new NotImplementedException();
+            var currentNode = root;
+            foreach (var c in s)
+            {
+                var child = currentNode.FindChildNode(c);
+                if (child == null)
+                    return false;
+                currentNode = child;
+            }
+            return true;
         }
 
         public void Delete(string s)
         {
-            throw new NotImplementedException();
+            var currentNode = root;
+            foreach (var c in s)
+            {
+                var child = currentNode.FindChildNode(c);
+                if (child == null)
+                    return;
+                currentNode = child;
+            }
+
+            currentNode = currentNode.parent;
+            for (int i = s.Length - 1; i >= 0; i--)
+            {
+                currentNode.DeleteChildNode(s[i]);
+                currentNode = currentNode.parent;
+            }
         }
     }
 }
