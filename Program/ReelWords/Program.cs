@@ -7,7 +7,14 @@ namespace ReelWords
         static void Main(string[] args)
         {
             bool playing = true;
-            Console.Out.WriteLine("Hello world!");
+            Console.Out.WriteLine("Welcome to ReelWords!");
+
+            Trie trie = Trie.Instance;
+
+            // Ingest word dictionary from file and store in the trie
+
+
+
 
             while (playing)
             {
