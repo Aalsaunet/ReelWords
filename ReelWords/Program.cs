@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 
 namespace ReelWords
 {
@@ -23,9 +24,13 @@ namespace ReelWords
 
             while (playing)
             {
-                char[] usableLetters = reel.GetCurrentLetters();
-                string displayLetters = new string(usableLetters);
+                Letter[] usableLetters = reel.GetCurrentLetters();
+                StringBuilder sb = new StringBuilder();
 
+                foreach (var letter in usableLetters)
+                    sb.Append(letter.displayLetter);
+
+                string displayLetters = new string(sb.ToString());
                 Console.Out.WriteLine(displayLetters);
 
                 string input = Console.ReadLine();
@@ -49,15 +54,16 @@ namespace ReelWords
             }
         }
 
-        private static List<int> findIndexMatches(char[] usableLetters, char[] inputLetters)
+        private static List<int> findIndexMatches(Letter[] usableLetters, char[] inputLetters)
         {
-            Array.Sort(usableLetters); Array.Sort(inputLetters);
+            Array.Sort(inputLetters);
+            Array.Sort(usableLetters, (x, y) => x.displayLetter.CompareTo(y.displayLetter));
             List<int> indexMatches = new List<int>();
             int i = 0, j = 0;
 
             while (i < usableLetters.Length && j < inputLetters.Length) {
-                if (usableLetters[i] == inputLetters[j]) {
-                    indexMatches.Add(i);
+                if (usableLetters[i].displayLetter == inputLetters[j]) {
+                    indexMatches.Add(usableLetters[i].reelIndex);
                     j++;
                 }
                 i++;

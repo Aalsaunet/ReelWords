@@ -7,11 +7,11 @@ namespace ReelWords
 	{
         public bool randomizeIndices = true;
         private static Reel instance = null;
-        private List<char[]> reelsLetters;
+        private List<Letter[]> reelsLetters;
         private List<int> reelsIndices;
 
         private Reel() {
-            reelsLetters = new List<char[]>();
+            reelsLetters = new List<Letter[]>();
             reelsIndices = new List<int>();
         }
 
@@ -28,11 +28,11 @@ namespace ReelWords
         public void Insert(string s)
         {
             string[] entries = s.Split();
-            char[] letters = new char[entries.Length];
+            Letter[] letters = new Letter[entries.Length];
 
             for (int i = 0; i < letters.Length; i++) {
                 if (char.IsLetter(entries[i][0]))
-                    letters[i] = entries[i][0];
+                    letters[i] = new Letter(entries[i][0], reelsLetters.Count);
             }
 
             reelsLetters.Add(letters);
@@ -41,8 +41,8 @@ namespace ReelWords
             reelsIndices.Add(initialIndex);
         }
 
-        public char[] GetCurrentLetters() {
-            char[] letters = new char[reelsLetters.Count];
+        public Letter[] GetCurrentLetters() {
+            Letter[] letters = new Letter[reelsLetters.Count];
             for (int i = 0; i < letters.Length; i++)
                 letters[i] = reelsLetters[i][reelsIndices[i]];
             return letters;

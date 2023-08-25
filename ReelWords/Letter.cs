@@ -3,9 +3,15 @@ namespace ReelWords
 {
 	public struct Letter
 	{
-		char displayLetter;
-		int currentIndex;
-		int pointValue;
+		public char displayLetter;
+        public int reelIndex;
+        public int pointValue;
+
+		public Letter(char dl, int i, int p = 0) {
+			displayLetter = dl;
+            reelIndex = i;
+			pointValue = p;
+        }
 	}
 }
 
