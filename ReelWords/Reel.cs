@@ -35,11 +35,11 @@ namespace ReelWords
 
             for (int i = 0; i < lettersInReel.Length; i++)
             {
-                char letter = reelLetters[i][0];
+                char letter = char.Parse(reelLetters[i]);
                 if (char.IsLetter(letter))
                 {
-                    int points = letterToScore.ContainsKey(letter) ? letterToScore[letter] : 0;
-                    lettersInReel[i] = new Letter(letter, reels.Count, points);
+                    int pointValue = letterToScore.ContainsKey(letter) ? letterToScore[letter] : 0;
+                    lettersInReel[i] = new Letter(letter, reels.Count, pointValue);
                 }
             }
 

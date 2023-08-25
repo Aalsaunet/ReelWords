@@ -57,13 +57,12 @@ namespace ReelWords
             }
         }
 
-        private static string FormatLettersForOutput(Letter[] usableLetters)
+        public static string FormatLettersForOutput(Letter[] usableLetters)
         {
             StringBuilder sb = new StringBuilder();
             foreach (var letter in usableLetters)
                 sb.Append(letter.letterValue);
-            string displayLetters = new string(sb.ToString());
-            return displayLetters;
+            return sb.ToString();
         }
 
         private static List<int> FindIndexMatches(Letter[] usableLetters, char[] inputLetters)
