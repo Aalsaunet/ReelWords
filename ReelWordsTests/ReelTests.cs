@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Text;
 using ReelWords;
 using Xunit;
 
@@ -25,11 +24,9 @@ namespace ReelWordsTests
             ReelsManager.Instance.InsertReel(SAMPLE_REEL);
 
             Letter[] usableLetters = ReelsManager.Instance.GetCurrentLetters();
-            StringBuilder sb = new StringBuilder();
-            foreach (var letter in usableLetters)
-                sb.Append(letter.letterValue);
+            string result = ReelsGameManager.FormatLettersForOutput(usableLetters);
 
-            Assert.True(sb.ToString().Equals(SAMPLE_LETTER));
+            Assert.True(result.Equals(SAMPLE_LETTER));
         }
 
         [Fact]
@@ -40,11 +37,9 @@ namespace ReelWordsTests
             ReelsManager.Instance.InsertReel(SAMPLE_REEL2);
 
             Letter[] usableLetters = ReelsManager.Instance.GetCurrentLetters();
-            StringBuilder sb = new StringBuilder();
-            foreach (var letter in usableLetters)
-                sb.Append(letter.letterValue);
+            string result = ReelsGameManager.FormatLettersForOutput(usableLetters);
 
-            Assert.True(sb.ToString().Equals(SAMPLE_LETTERS));
+            Assert.True(result.ToString().Equals(SAMPLE_LETTERS));
         }
 
         [Fact]
@@ -57,11 +52,9 @@ namespace ReelWordsTests
             ReelsManager.Instance.IncrementIndices(new List<int> { 0, 1, 2 });
 
             Letter[] usableLetters = ReelsManager.Instance.GetCurrentLetters();
-            StringBuilder sb = new StringBuilder();
-            foreach (var letter in usableLetters)
-                sb.Append(letter.letterValue);
+            string result = ReelsGameManager.FormatLettersForOutput(usableLetters);
 
-            Assert.True(sb.ToString().Equals(SAMPLE_LETTERS2));
+            Assert.True(result.Equals(SAMPLE_LETTERS2));
         }
     }
 }
