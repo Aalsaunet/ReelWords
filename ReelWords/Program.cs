@@ -11,10 +11,10 @@ namespace ReelWords
 
         static void Main(string[] args)
         {
-            bool playing = true;
-            Console.Out.WriteLine("Welcome to ReelWords!");
-
             Trie trie = Trie.Instance;
+            bool playing = true;
+
+            DisplayIntroText();
 
             // Ingest word dictionary from file and store in the trie
             var lines = File.ReadLines(DICT_PATH);
@@ -35,6 +35,11 @@ namespace ReelWords
                 // don't worry about creating tests for everything, just important functions as
                 // seen for the Trie tests
             }
+        }
+
+        private static void DisplayIntroText()
+        {
+            Console.Out.WriteLine("Welcome to ReelWords!");
         }
     }
 }
