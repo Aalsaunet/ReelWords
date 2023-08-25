@@ -3,64 +3,72 @@ using System.Collections.Generic;
 
 namespace ReelWords
 {
-	public class Reel
-	{
-        public bool randomizeIndices = true;
-        private static Reel instance = null;
-        private Dictionary<char, int> letterScores = null;
-        private List<Letter[]> reelsLetters;
-        private List<int> reelsIndices;
+    public class ReelsManager
+    {
+        /* A reel is like a wheel/slot in a slot machine*/
+        public bool randomizeReelPositions = true;
+        private static ReelsManager instance = null;
+        private Dictionary<char, int> letterToScore = null;
+        private List<Letter[]> reels;
+        private List<int> reelsPositions;
 
-        private Reel() {
-            letterScores = new Dictionary<char, int>();
-            reelsLetters = new List<Letter[]>();
-            reelsIndices = new List<int>();
+        private ReelsManager()
+        {
+            letterToScore = new Dictionary<char, int>();
+            reels = new List<Letter[]>();
+            reelsPositions = new List<int>();
         }
 
-        public static Reel Instance
+        public static ReelsManager Instance
         {
             get
             {
                 if (instance == null)
-                    instance = new Reel();
+                    instance = new ReelsManager();
                 return instance;
             }
         }
 
-        public void InsertReel(string s)
+        public void InsertReel(string reelLine)
         {
-            string[] entries = s.Split();
-            Letter[] letters = new Letter[entries.Length];
+            string[] reelLetters = reelLine.Split();
+            Letter[] lettersInReel = new Letter[reelLetters.Length];
 
-            for (int i = 0; i < letters.Length; i++) {
-                if (char.IsLetter(entries[i][0]))
-                    letters[i] = new Letter(entries[i][0], reelsLetters.Count, letterScores[entries[i][0]]);
+            for (int i = 0; i < lettersInReel.Length; i++)
+            {
+                char letter = reelLetters[i][0];
+                if (char.IsLetter(letter))
+                {
+                    int points = letterToScore.ContainsKey(letter) ? letterToScore[letter] : 0;
+                    lettersInReel[i] = new Letter(letter, reels.Count, points);
+                }
             }
 
-            reelsLetters.Add(letters);
-
-            int initialIndex = randomizeIndices ? new Random().Next(0, letters.Length) : 0;
-            reelsIndices.Add(initialIndex);
+            int initialPosition = randomizeReelPositions ? new Random().Next(0, lettersInReel.Length) : 0;
+            reels.Add(lettersInReel);
+            reelsPositions.Add(initialPosition);
         }
 
         public void InsertLetterScore(string s)
         {
             string[] letterAndScore = s.Split();
-            letterScores[char.Parse(letterAndScore[0])] = Int32.Parse(letterAndScore[1]);
+            letterToScore[char.Parse(letterAndScore[0])] = Int32.Parse(letterAndScore[1]);
         }
 
-        public Letter[] GetCurrentLetters() {
-            Letter[] letters = new Letter[reelsLetters.Count];
+        public Letter[] GetCurrentLetters()
+        {
+            Letter[] letters = new Letter[reels.Count];
             for (int i = 0; i < letters.Length; i++)
-                letters[i] = reelsLetters[i][reelsIndices[i]];
+                letters[i] = reels[i][reelsPositions[i]];
             return letters;
         }
 
         public void IncrementIndices(List<int> indices)
         {
-            foreach (var index in indices) {
-                reelsIndices[index] = (reelsIndices[index] + 1)
-                    % reelsLetters[index].Length;
+            foreach (var index in indices)
+            {
+                reelsPositions[index] = (reelsPositions[index] + 1)
+                    % reels[index].Length;
             }
         }
 
@@ -68,7 +76,7 @@ namespace ReelWords
         {
             int sum = 0;
             foreach (var index in indices)
-                sum += reelsLetters[index][reelsIndices[index]].pointValue;
+                sum += reels[index][reelsPositions[index]].pointValue;
             return sum;
         }
     }

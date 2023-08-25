@@ -13,13 +13,13 @@ namespace ReelWordsTests
         private const string SAMPLE_LETTERS = "ue";
 
         public ReelTests() {
-            Reel.Instance.randomizeIndices = false;
+            ReelsManager.Instance.randomizeReelPositions = false;
         }
 
         [Fact]
         public void ReelInsertTest()
         {
-            Reel reel = Reel.Instance;
+            ReelsManager reel = ReelsManager.Instance;
             reel.InsertReel(SAMPLE_REEL);
             Assert.True(reel.GetCurrentLetters().Equals(SAMPLE_LETTER));
         }
@@ -27,7 +27,7 @@ namespace ReelWordsTests
         [Fact]
         public void ReelInsertMultipleTest()
         {
-            Reel reel = Reel.Instance;
+            ReelsManager reel = ReelsManager.Instance;
             reel.InsertReel(SAMPLE_REEL);
             reel.InsertReel(SAMPLE_REEL2);
             Assert.True(reel.GetCurrentLetters().Equals(SAMPLE_LETTERS));
@@ -36,7 +36,7 @@ namespace ReelWordsTests
         [Fact]
         public void ReelIncrementationTest()
         {
-            Reel reel = Reel.Instance;
+            ReelsManager reel = ReelsManager.Instance;
             reel.InsertReel(SAMPLE_REEL);
             reel.IncrementIndices(new List<int> { 1, 4, 5, 6 });
             Assert.True(reel.GetCurrentLetters().Equals(SAMPLE_REEL3));

@@ -43,7 +43,7 @@
             var currentNode = root;
             foreach (var c in s)
             {
-                var child = currentNode.FindChildNode(c);
+                Node child = currentNode.FindChildNode(c);
                 if (child == null)
                     return false;
                 currentNode = child;
@@ -56,7 +56,7 @@
             var currentNode = root;
             foreach (var c in s)
             {
-                var child = currentNode.FindChildNode(c);
+                Node child = currentNode.FindChildNode(c);
                 if (child == null)
                     return;
                 currentNode = child;
