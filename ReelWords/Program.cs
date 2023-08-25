@@ -13,7 +13,6 @@ namespace ReelWords
         {
             Trie trie = Trie.Instance;
             Reel reel = Reel.Instance;
-
             bool playing = true;
 
             DisplayIntroText();
@@ -23,16 +22,45 @@ namespace ReelWords
 
             while (playing)
             {
-                Console.Out.WriteLine(reel.GetCurrentLetters());
-                Console.Out.Write("> ");
+                char[] usableLetters = reel.GetCurrentLetters();
+                string displayLetters = new string(usableLetters);
+
+                Console.Out.WriteLine(displayLetters);
+
                 string input = Console.ReadLine();
+                char[] inputLetters = input.ToCharArray();
 
-                // TODO:  Run game logic here using the user input string
 
-                // TODO:  Create simple unit tests to test your code in the ReelWordsTests project,
-                // don't worry about creating tests for everything, just important functions as
-                // seen for the Trie tests
+                if (!isValidInput(usableLetters, inputLetters)) {
+                    Console.Out.WriteLine("[X] Only use the provided letters to form a word!");
+                    continue;
+                }
+
+                if (!trie.Search(input)) {
+                    Console.Out.WriteLine("[X] That's not an accepted word!");
+                    continue;
+                }
+
+                Console.Out.WriteLine("Nice work! You gain X points. The current total is Y.");
+
+                // Increments reels
+
             }
+        }
+
+        private static bool isValidInput(char[] usableLetters, char[] inputLetters)
+        {
+            Array.Sort(usableLetters); Array.Sort(inputLetters);
+            int matches = 0, i = 0, j = 0;
+
+            while (i < usableLetters.Length && j < inputLetters.Length) {
+                if (usableLetters[i] == inputLetters[j]) {
+                    matches++;
+                    j++;
+                }
+                i++;
+            }
+            return matches == inputLetters.Length;
         }
 
         private static void DisplayIntroText()

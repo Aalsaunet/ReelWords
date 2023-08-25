@@ -41,11 +41,11 @@ namespace ReelWords
             wordWheelsCurrentIndices.Add(initialIndex);
         }
 
-        public string GetCurrentLetters() {
+        public char[] GetCurrentLetters() {
             char[] letters = new char[wordWheelsLetters.Count];
             for (int i = 0; i < letters.Length; i++)
                 letters[i] = wordWheelsLetters[i][wordWheelsCurrentIndices[i]];
-            return new string(letters);
+            return letters;
         }   
     }
 }
