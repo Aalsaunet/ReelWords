@@ -15,7 +15,7 @@ namespace ReelWords
             children = new List<Node>();
         }
 
-        public bool IsLeaf()
+        public bool IsLeafNode()
         {
             return children.Count == 0;
         }

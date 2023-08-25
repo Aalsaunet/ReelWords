@@ -66,6 +66,10 @@
                 return;
 
             currentNode.DeleteChildNode(WORD_STOP);
+
+            if (!currentNode.IsLeafNode())
+                return;
+
             currentNode = currentNode.parent;
             for (int i = s.Length - 1; i >= 0; i--)
             {
