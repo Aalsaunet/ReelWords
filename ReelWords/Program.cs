@@ -29,9 +29,9 @@ namespace ReelWords
 
                 string input = Console.ReadLine();
                 char[] inputLetters = input.ToCharArray();
+                int[] indexMatches;
 
-
-                if (!isValidInput(usableLetters, inputLetters)) {
+                if (!isValidInput(usableLetters, inputLetters, out indexMatches)) {
                     Console.Out.WriteLine("[X] Only use the provided letters to form a word!");
                     continue;
                 }
@@ -40,21 +40,21 @@ namespace ReelWords
                     Console.Out.WriteLine("[X] That's not an accepted word!");
                     continue;
                 }
-
+                // TODO: Calculate score
                 Console.Out.WriteLine("Nice work! You gain X points. The current total is Y.");
-
-                // Increments reels
-
+                reel.IncrementIndices(indexMatches);
             }
         }
 
-        private static bool isValidInput(char[] usableLetters, char[] inputLetters)
+        private static bool isValidInput(char[] usableLetters, char[] inputLetters, out int[] indexMatches)
         {
             Array.Sort(usableLetters); Array.Sort(inputLetters);
             int matches = 0, i = 0, j = 0;
+            indexMatches = new int[inputLetters.Length];
 
             while (i < usableLetters.Length && j < inputLetters.Length) {
                 if (usableLetters[i] == inputLetters[j]) {
+                    indexMatches[j] = i;
                     matches++;
                     j++;
                 }

@@ -7,12 +7,12 @@ namespace ReelWords
 	{
         public bool randomizeIndices = true;
         private static Reel instance = null;
-        private List<char[]> wordWheelsLetters;
-        private List<int> wordWheelsCurrentIndices;
+        private List<char[]> reelsLetters;
+        private List<int> reelsIndices;
 
         private Reel() {
-            wordWheelsLetters = new List<char[]>();
-            wordWheelsCurrentIndices = new List<int>();
+            reelsLetters = new List<char[]>();
+            reelsIndices = new List<int>();
         }
 
         public static Reel Instance
@@ -35,18 +35,26 @@ namespace ReelWords
                     letters[i] = entries[i][0];
             }
 
-            wordWheelsLetters.Add(letters);
+            reelsLetters.Add(letters);
 
             int initialIndex = randomizeIndices ? new Random().Next(0, letters.Length) : 0;
-            wordWheelsCurrentIndices.Add(initialIndex);
+            reelsIndices.Add(initialIndex);
         }
 
         public char[] GetCurrentLetters() {
-            char[] letters = new char[wordWheelsLetters.Count];
+            char[] letters = new char[reelsLetters.Count];
             for (int i = 0; i < letters.Length; i++)
-                letters[i] = wordWheelsLetters[i][wordWheelsCurrentIndices[i]];
+                letters[i] = reelsLetters[i][reelsIndices[i]];
             return letters;
-        }   
+        }
+
+        public void IncrementIndices(int[] indices)
+        {
+            foreach (var index in indices) {
+                reelsIndices[index] = (reelsIndices[index] + 1)
+                    % reelsLetters[index].Length;
+            }
+        }
     }
 }
 
