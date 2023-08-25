@@ -5,9 +5,9 @@ namespace ReelWords
 {
     public static class Program
     {
-        public const string DictPath = "Resources/american-english-large.txt";
-        public const string ReelsPath = "Resources/reels.txt";
-        public const string ScoresPath = "Resources/scores.txt";
+        public const string DICT_PATH = "Resources/american-english-large.txt";
+        public const string REELS_PATH = "Resources/reels.txt";
+        public const string SCORES_PATH = "Resources/scores.txt";
 
         static void Main(string[] args)
         {
@@ -17,8 +17,9 @@ namespace ReelWords
             Trie trie = Trie.Instance;
 
             // Ingest word dictionary from file and store in the trie
-            var lines = File.ReadLines(DictPath);
-            foreach (var line in lines) {
+            var lines = File.ReadLines(DICT_PATH);
+            foreach (var line in lines)
+            {
                 trie.Insert(line);
             }
 

@@ -2,12 +2,14 @@
 {
     public class Trie
     {
+        public const char TRIE_ROOT = '^';
+        public const char WORD_STOP = '=';
         private static Trie instance = null;
         private static Node root = null;
 
         private Trie()
         {
-            root = new Node('^', null);
+            root = new Node(TRIE_ROOT, null);
         }
 
         public static Trie Instance
@@ -33,6 +35,7 @@
                 }
                 currentNode = child;
             }
+            currentNode.children.Add(new Node(WORD_STOP, currentNode));
         }
 
         public bool Search(string s)
@@ -45,7 +48,7 @@
                     return false;
                 currentNode = child;
             }
-            return true;
+            return currentNode.FindChildNode(WORD_STOP) != null;
         }
 
         public void Delete(string s)
@@ -59,6 +62,10 @@
                 currentNode = child;
             }
 
+            if (currentNode.FindChildNode(WORD_STOP) == null)
+                return;
+
+            currentNode.DeleteChildNode(WORD_STOP);
             currentNode = currentNode.parent;
             for (int i = s.Length - 1; i >= 0; i--)
             {
