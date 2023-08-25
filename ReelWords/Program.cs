@@ -12,21 +12,19 @@ namespace ReelWords
         static void Main(string[] args)
         {
             Trie trie = Trie.Instance;
+            Reel reel = Reel.Instance;
+
             bool playing = true;
 
             DisplayIntroText();
+            LoadResources();
 
-            // Ingest word dictionary from file and store in the trie
-            var lines = File.ReadLines(DICT_PATH);
-            foreach (var line in lines)
-            {
-                trie.Insert(line);
-            }
-
-            Console.Out.WriteLine("Trie filled!");
+            Console.Out.WriteLine("Make words!");
 
             while (playing)
             {
+                Console.Out.WriteLine(reel.GetCurrentLetters());
+                Console.Out.Write("> ");
                 string input = Console.ReadLine();
 
                 // TODO:  Run game logic here using the user input string
@@ -40,6 +38,23 @@ namespace ReelWords
         private static void DisplayIntroText()
         {
             Console.Out.WriteLine("Welcome to ReelWords!");
+        }
+
+        private static void LoadResources()
+        {
+            // Ingest word dictionary from file and store in the trie
+            var dictLines = File.ReadLines(DICT_PATH);
+            foreach (var line in dictLines)
+            {
+                Trie.Instance.Insert(line);
+            }
+
+            // Ingest the reels
+            var reelLines = File.ReadLines(REELS_PATH);
+            foreach (var line in reelLines)
+            {
+                Reel.Instance.Insert(line);
+            }
         }
     }
 }
