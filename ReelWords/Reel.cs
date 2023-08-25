@@ -48,7 +48,7 @@ namespace ReelWords
             return letters;
         }
 
-        public void IncrementIndices(int[] indices)
+        public void IncrementIndices(List<int> indices)
         {
             foreach (var index in indices) {
                 reelsIndices[index] = (reelsIndices[index] + 1)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace ReelWords
@@ -29,9 +30,11 @@ namespace ReelWords
 
                 string input = Console.ReadLine();
                 char[] inputLetters = input.ToCharArray();
-                int[] indexMatches;
 
-                if (!isValidInput(usableLetters, inputLetters, out indexMatches)) {
+                List<int> indexMatches = findIndexMatches(usableLetters, inputLetters);
+                bool isValidInput = indexMatches.Count == inputLetters.Length;
+
+                if (!isValidInput) {
                     Console.Out.WriteLine("[X] Only use the provided letters to form a word!");
                     continue;
                 }
@@ -46,21 +49,20 @@ namespace ReelWords
             }
         }
 
-        private static bool isValidInput(char[] usableLetters, char[] inputLetters, out int[] indexMatches)
+        private static List<int> findIndexMatches(char[] usableLetters, char[] inputLetters)
         {
             Array.Sort(usableLetters); Array.Sort(inputLetters);
-            int matches = 0, i = 0, j = 0;
-            indexMatches = new int[inputLetters.Length];
+            List<int> indexMatches = new List<int>();
+            int i = 0, j = 0;
 
             while (i < usableLetters.Length && j < inputLetters.Length) {
                 if (usableLetters[i] == inputLetters[j]) {
-                    indexMatches[j] = i;
-                    matches++;
+                    indexMatches.Add(i);
                     j++;
                 }
                 i++;
             }
-            return matches == inputLetters.Length;
+            return indexMatches;
         }
 
         private static void DisplayIntroText()
