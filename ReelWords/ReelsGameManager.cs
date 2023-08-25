@@ -27,6 +27,8 @@ namespace ReelWords
 
                 // Get answer from user
                 string userInput = Console.ReadLine();
+                if (userInput.Length >= 2 && userInput[0] == ':' && userInput[1] == 'q')
+                    break; // Terminates the game and the program execution
 
                 // Check if the submitted letters are all from reels and valid
                 char[] inputLetters = userInput.ToCharArray();
@@ -90,6 +92,7 @@ namespace ReelWords
                 "values of the letters you use, and when used those letter will be replaced by new ones.");
             Console.Out.WriteLine("Try to see how many total points you can score before running out of " +
                 "word ideas. But most of all: Have a ton of fun! :D");
+            Console.Out.WriteLine("\n...And if you aren't having fun, type ':q' to quit (although I can't see why you would ^^).");
             Console.Out.WriteLine("\nHere are your first set of letters:");
         }
 

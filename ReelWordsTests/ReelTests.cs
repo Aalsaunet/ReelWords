@@ -19,27 +19,28 @@ namespace ReelWordsTests
         [Fact]
         public void ReelInsertTest()
         {
-            ReelsManager reel = ReelsManager.Instance;
-            reel.InsertReel(SAMPLE_REEL);
-            Assert.True(reel.GetCurrentLetters().Equals(SAMPLE_LETTER));
+            ReelsManager.Instance.ClearReels();
+            ReelsManager.Instance.InsertReel(SAMPLE_REEL);
+            Assert.True(ReelsManager.Instance.GetCurrentLetters().Equals(SAMPLE_LETTER));
         }
 
         [Fact]
         public void ReelInsertMultipleTest()
         {
-            ReelsManager reel = ReelsManager.Instance;
-            reel.InsertReel(SAMPLE_REEL);
-            reel.InsertReel(SAMPLE_REEL2);
-            Assert.True(reel.GetCurrentLetters().Equals(SAMPLE_LETTERS));
+            ReelsManager.Instance.ClearReels();
+            ReelsManager.Instance.InsertReel(SAMPLE_REEL);
+            ReelsManager.Instance.InsertReel(SAMPLE_REEL2);
+            Assert.True(ReelsManager.Instance.GetCurrentLetters().Equals(SAMPLE_LETTERS));
         }
 
         [Fact]
         public void ReelIncrementationTest()
         {
-            ReelsManager reel = ReelsManager.Instance;
-            reel.InsertReel(SAMPLE_REEL);
-            reel.IncrementIndices(new List<int> { 1, 4, 5, 6 });
-            Assert.True(reel.GetCurrentLetters().Equals(SAMPLE_REEL3));
+            ReelsManager.Instance.ClearReels();
+            ReelsManager.Instance.InsertReel(SAMPLE_REEL);
+            ReelsManager.Instance.InsertReel(SAMPLE_REEL2);
+            ReelsManager.Instance.IncrementIndices(new List<int> { 1, 4, 5, 6 });
+            Assert.True(ReelsManager.Instance.GetCurrentLetters().Equals(SAMPLE_REEL3));
         }
     }
 }

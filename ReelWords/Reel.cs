@@ -5,7 +5,6 @@ namespace ReelWords
 {
     public class ReelsManager
     {
-        /* A reel is like a wheel/slot in a slot machine*/
         public bool randomizeReelPositions = true;
         private static ReelsManager instance = null;
         private Dictionary<char, int> letterToScore = null;
@@ -78,6 +77,13 @@ namespace ReelWords
             foreach (var index in indices)
                 sum += reels[index][reelsPositions[index]].pointValue;
             return sum;
+        }
+
+        public void ClearReels()
+        {
+            letterToScore = new Dictionary<char, int>();
+            reels = new List<Letter[]>();
+            reelsPositions = new List<int>();
         }
     }
 }
