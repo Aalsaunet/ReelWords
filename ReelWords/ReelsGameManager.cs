@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace ReelWords
@@ -30,6 +31,18 @@ namespace ReelWords
                 if (userInput.Length >= 2 && userInput[0] == ':' && userInput[1] == 'q')
                     break; // Terminates the game and the program execution
 
+                if (userInput.Length >= 2 && userInput[0] == ':' && userInput[1] == 'h')
+                {
+                    Console.Out.WriteLine("> " + GenerateHint(usableLetters));
+                    continue;
+                }
+
+                if (userInput.Length >= 2 && userInput[0] == ':' && userInput[1] == 's')
+                {
+                    Console.Out.WriteLine("> " + GenerateHint(usableLetters, true));
+                    continue;
+                }
+
                 // Check if the submitted letters are all from reels and valid
                 char[] inputLetters = userInput.ToCharArray();
                 List<int> indexMatches = FindIndexMatches(usableLetters, inputLetters);
@@ -54,6 +67,45 @@ namespace ReelWords
                     "Your total score is now " + totalScore + ".");
 
                 ReelsManager.Instance.IncrementIndices(indexMatches);
+            }
+        }
+
+        private static string GenerateHint(Letter[] usableLetters, bool showMatches = false)
+        {
+            // Check if there's any valid solution with the current usable letters 
+            char[] letterValues = usableLetters.Select(l => l.letterValue).ToArray();
+            List<string> validWords = new List<string>();
+
+            GenerateCombinationsRecursive(letterValues, "", validWords);
+
+            string hintOutput = "There are " + validWords.Count + " possible word combinations from these letters.\n";
+
+            if (showMatches)
+            {
+                StringBuilder sb = new StringBuilder();
+                foreach (var word in validWords)
+                    sb.Append(word + "\n");
+                hintOutput += sb.ToString();
+            }
+
+            return hintOutput;
+        }
+
+        private static void GenerateCombinationsRecursive(char[] letterValues, string currentCombination, List<string> validWords)
+        {
+            var (isPath, isWord) = Trie.Instance.IsValidPath(currentCombination);
+
+            if (!isPath)
+                return;
+
+            if (isWord)
+                validWords.Add(currentCombination);
+
+            for (int i = 0; i < letterValues.Length; i++)
+            {
+                char currentChar = letterValues[i];
+                string newCombination = currentCombination + currentChar;
+                GenerateCombinationsRecursive(letterValues, newCombination, validWords);
             }
         }
 

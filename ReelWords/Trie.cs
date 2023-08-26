@@ -5,7 +5,7 @@
         public const char TRIE_ROOT = '^';
         public const char WORD_STOP = '=';
         private static Trie instance = null;
-        private static Node root = null;
+        private Node root = null;
 
         private Trie()
         {
@@ -76,6 +76,20 @@
                 currentNode.DeleteChildNode(s[i]);
                 currentNode = currentNode.parent;
             }
+        }
+
+        public (bool isPath, bool isWord) IsValidPath(string s)
+        {
+            var currentNode = root;
+            foreach (var c in s)
+            {
+                Node child = currentNode.FindChildNode(c);
+                if (child == null)
+                    return (false, false);
+                currentNode = child;
+            }
+            bool isValidWord = currentNode.FindChildNode(WORD_STOP) != null;
+            return (true, isValidWord);
         }
     }
 }
