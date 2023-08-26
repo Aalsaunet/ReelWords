@@ -57,5 +57,15 @@ namespace ReelWordsTests
             trie.Delete(TEST_WORD_SHORT);
             Assert.True(trie.Search(TEST_WORD_LONG));
         }
+
+        [Fact]
+        public void TrieIsValidPathTest()
+        {
+            Trie trie = Trie.Instance;
+            trie.Insert(TEST_WORD_LONG);
+            var (isValidPath, isWord) = trie.IsValidPath(TEST_WORD_SHORT);
+            Assert.True(isValidPath);
+            Assert.False(isWord);
+        }
     }
 }

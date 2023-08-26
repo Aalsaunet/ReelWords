@@ -47,7 +47,7 @@ namespace ReelWords
                 }
 
                 // Check if the submitted letters are all from reels and valid
-                char[] inputLetters = userInput.ToCharArray();
+                char[] inputLetters = userInput.ToLower().ToCharArray();
                 List<int> indexMatches = WordMatcher.FindIndexMatches(usableLetters, inputLetters);
                 bool allLettersUsable = indexMatches.Count == inputLetters.Length;
 
@@ -91,15 +91,15 @@ namespace ReelWords
         {
             var dictLines = File.ReadLines(DICT_PATH);
             foreach (var line in dictLines)
-                Trie.Instance.Insert(line);
+                Trie.Instance.Insert(line.ToLower());
 
             var scoreLines = File.ReadLines(SCORES_PATH);
             foreach (var line in scoreLines)
-                ReelsManager.Instance.InsertLetterScore(line);
+                ReelsManager.Instance.InsertLetterScore(line.ToLower());
 
             var reelLines = File.ReadLines(REELS_PATH);
             foreach (var line in reelLines)
-                ReelsManager.Instance.InsertReel(line);
+                ReelsManager.Instance.InsertReel(line.ToLower());
         }
 
         public static string FormatLettersForOutput(Letter[] usableLetters)
