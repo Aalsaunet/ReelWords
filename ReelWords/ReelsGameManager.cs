@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace ReelWords
@@ -12,7 +11,7 @@ namespace ReelWords
         public const string SCORES_PATH = "Resources/scores.txt";
         public const string REELS_PATH = "Resources/reels.txt";
         public const string EXTENDED_REELS_PATH = "Resources/extended-reels.txt";
-        
+
         private static int totalScore = 0;
 
         static void Main(string[] args)
@@ -28,24 +27,28 @@ namespace ReelWords
 
                 // Get answer from user
                 string userInput = Console.ReadLine();
-                if (userInput.Length >= 2 && userInput[0] == ':' && userInput[1] == 'q')
-                    break; // Terminates the game and the program execution
 
-                if (userInput.Length >= 2 && userInput[0] == ':' && userInput[1] == 'h')
+                // Handle command actions
+                if (userInput.Length >= 2 && userInput[0] == ':')
                 {
-                    Console.Out.WriteLine("> " + GenerateHint(usableLetters));
-                    continue;
-                }
-
-                if (userInput.Length >= 2 && userInput[0] == ':' && userInput[1] == 's')
-                {
-                    Console.Out.WriteLine("> " + GenerateHint(usableLetters, true));
+                    switch (userInput[1])
+                    {
+                        case 'q':
+                            Environment.Exit(0);
+                            break;
+                        case 'h':
+                            Console.Out.WriteLine("> " + WordMatcher.GenerateHint(usableLetters));
+                            break;
+                        case 's':
+                            Console.Out.WriteLine("> " + WordMatcher.GenerateHint(usableLetters, true));
+                            break;
+                    }
                     continue;
                 }
 
                 // Check if the submitted letters are all from reels and valid
                 char[] inputLetters = userInput.ToCharArray();
-                List<int> indexMatches = FindIndexMatches(usableLetters, inputLetters);
+                List<int> indexMatches = WordMatcher.FindIndexMatches(usableLetters, inputLetters);
                 bool allLettersUsable = indexMatches.Count == inputLetters.Length;
 
                 if (!allLettersUsable)
@@ -70,70 +73,6 @@ namespace ReelWords
             }
         }
 
-        private static string GenerateHint(Letter[] usableLetters, bool showMatches = false)
-        {
-            // Check if there's any valid solution with the current usable letters 
-            char[] letterValues = usableLetters.Select(l => l.letterValue).ToArray();
-            List<string> validWords = new List<string>();
-
-            GenerateCombinationsRecursive(letterValues, "", validWords);
-
-            string hintOutput = "There are " + validWords.Count + " possible word combinations from these letters.\n";
-
-            if (showMatches)
-            {
-                StringBuilder sb = new StringBuilder();
-                foreach (var word in validWords)
-                    sb.Append(word + "\n");
-                hintOutput += sb.ToString();
-            }
-
-            return hintOutput;
-        }
-
-        private static void GenerateCombinationsRecursive(char[] letterValues, string currentCombination, List<string> validWords)
-        {
-            var (isPath, isWord) = Trie.Instance.IsValidPath(currentCombination);
-
-            if (!isPath)
-                return;
-
-            if (isWord)
-                validWords.Add(currentCombination);
-
-            for (int i = 0; i < letterValues.Length; i++)
-            {
-                char currentChar = letterValues[i];
-                string newCombination = currentCombination + currentChar;
-                GenerateCombinationsRecursive(letterValues, newCombination, validWords);
-            }
-        }
-
-        public static string FormatLettersForOutput(Letter[] usableLetters)
-        {
-            StringBuilder sb = new StringBuilder();
-            foreach (var letter in usableLetters)
-                sb.Append(letter.letterValue);
-            return sb.ToString();
-        }
-
-        private static List<int> FindIndexMatches(Letter[] usableLetters, char[] inputLetters)
-        {
-            Array.Sort(inputLetters);
-            Array.Sort(usableLetters, (x, y) => x.letterValue.CompareTo(y.letterValue));
-            List<int> indexMatches = new List<int>();
-            int i = 0, j = 0;
-
-            while (i < usableLetters.Length && j < inputLetters.Length) {
-                if (usableLetters[i].letterValue == inputLetters[j]) {
-                    indexMatches.Add(usableLetters[i].reelIndex);
-                    j++;
-                }
-                i++;
-            }
-            return indexMatches;
-        }
-
         private static void DisplayIntroText()
         {
             Console.Out.WriteLine("Welcome to ReelWords!");
@@ -143,7 +82,8 @@ namespace ReelWords
                 "values of the letters you use, and when used those letter will be replaced by new ones.");
             Console.Out.WriteLine("Try to see how many total points you can score before running out of " +
                 "word ideas. But most of all: Have a ton of fun! :D");
-            Console.Out.WriteLine("\n...And if you aren't having fun, type ':q' to quit (although I can't see why you would ^^).");
+            Console.Out.WriteLine("\n...And if you aren't having fun, type ':h' for a hint, ':s' " +
+                "to see some words you could submit or - in the worst case - ':q' to quit (although I can't see why you would^^).");
             Console.Out.WriteLine("\nHere are your first set of letters:");
         }
 
@@ -159,7 +99,15 @@ namespace ReelWords
 
             var reelLines = File.ReadLines(REELS_PATH);
             foreach (var line in reelLines)
-                ReelsManager.Instance.InsertReel(line);    
+                ReelsManager.Instance.InsertReel(line);
+        }
+
+        public static string FormatLettersForOutput(Letter[] usableLetters)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (var letter in usableLetters)
+                sb.Append(letter.letterValue);
+            return sb.ToString();
         }
     }
 }
