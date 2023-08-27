@@ -78,7 +78,7 @@
             }
         }
 
-        public (bool isPath, bool isWord) IsValidPath(string s)
+        public (bool isPath, bool isWord) getPathAndWordValidity(string s)
         {
             var currentNode = root;
             foreach (var c in s)

@@ -29,7 +29,7 @@ namespace ReelWords
         public static string GenerateHint(Letter[] usableLetters, bool showMatches = false)
         {
             // Check if there's any valid solution with the current usable letters 
-            char[] letterValues = usableLetters.Select(l => l.letterValue).ToArray();
+            List<char> letterValues = usableLetters.Select(l => l.letterValue).ToList<char>();
             List<string> validWords = new List<string>();
 
             GenerateCombinationsRecursive(letterValues, "", validWords);
@@ -47,21 +47,22 @@ namespace ReelWords
             return hintOutput;
         }
 
-        private static void GenerateCombinationsRecursive(char[] letterValues, string currentCombination, List<string> validWords)
+        private static void GenerateCombinationsRecursive(List<char> letterValues, string currentCombination, List<string> validWords)
         {
-            var (isPath, isWord) = Trie.Instance.IsValidPath(currentCombination);
+            var (isValidPath, isValidWord) = Trie.Instance.getPathAndWordValidity(currentCombination);
 
-            if (!isPath)
+            if (!isValidPath)
                 return;
 
-            if (isWord)
+            if (isValidWord)
                 validWords.Add(currentCombination);
 
-            for (int i = 0; i < letterValues.Length; i++)
+            for (int i = 0; i < letterValues.Count; i++)
             {
-                char currentChar = letterValues[i];
-                string newCombination = currentCombination + currentChar;
-                GenerateCombinationsRecursive(letterValues, newCombination, validWords);
+                string newCombination = currentCombination + letterValues[i];
+                List<char> updatedLetterValues = new List<char>(letterValues);
+                updatedLetterValues.RemoveAt(i);
+                GenerateCombinationsRecursive(updatedLetterValues, newCombination, validWords);
             }
         }
     }
