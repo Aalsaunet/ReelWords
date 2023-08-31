@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Diagnostics;
+using System.Threading.Tasks;
+using System.Threading.Tasks.Dataflow;
 
 namespace ReelWords
 {
@@ -17,7 +20,13 @@ namespace ReelWords
         static void Main(string[] args)
         {
             DisplayIntroText();
+
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
             LoadResourcesFromFile();
+            stopwatch.Stop();
+            // Single threaded setup time: 221ms, multithreaded/dataflow: 107ms 
+            Console.Out.WriteLine("Setup time: " + stopwatch.ElapsedMilliseconds + "ms");
 
             while (true)
             {
@@ -87,11 +96,34 @@ namespace ReelWords
             Console.Out.WriteLine("\nHere are your first set of letters:");
         }
 
-        private static void LoadResourcesFromFile()
+
+        static void Produce(ITargetBlock<string> target)
         {
             var dictLines = File.ReadLines(DICT_PATH);
-            foreach (var line in dictLines)
+            foreach (var line in dictLines) {
+                target.Post(line);
+            }
+            target.Complete();
+        }
+
+        static async void ConsumeAsync(ISourceBlock<string> source)
+        {
+            while (await source.OutputAvailableAsync())
+            {
+                string line = await source.ReceiveAsync();
                 Trie.Instance.Insert(line.ToLower());
+            }
+        }
+
+        private static void LoadResourcesFromFile()
+        {
+            var buffer = new BufferBlock<string>();
+            ConsumeAsync(buffer);
+            Produce(buffer);
+
+            //var dictLines = File.ReadLines(DICT_PATH);
+            //foreach (var line in dictLines)
+            //    Trie.Instance.Insert(line.ToLower());
 
             var scoreLines = File.ReadLines(SCORES_PATH);
             foreach (var line in scoreLines)
