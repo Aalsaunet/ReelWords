@@ -15,6 +15,7 @@ namespace ReelWords
         public const string SCORES_PATH = "Resources/scores.txt";
         public const string REELS_PATH = "Resources/reels.txt";
         public const string EXTENDED_REELS_PATH = "Resources/extended-reels.txt";
+        public const int THREAD_COUNT = 3;
 
         private static int totalScore = 0;
 
@@ -27,7 +28,8 @@ namespace ReelWords
             LoadResourcesFromFile();
             stopwatch.Stop();
             // Single threaded setup time: 221ms, multithreaded/dataflow: 107ms 
-            Console.Out.WriteLine("Setup time: " + stopwatch.ElapsedMilliseconds + "ms");
+            Console.Out.WriteLine("[Load time: " + stopwatch.ElapsedMilliseconds + "ms]");
+            Console.Out.WriteLine("\nHere are your first set of letters:");
 
             while (true)
             {
@@ -94,7 +96,6 @@ namespace ReelWords
                 "word ideas. But most of all: Have a ton of fun! :D");
             Console.Out.WriteLine("\n...And if you aren't having fun, type ':h' for a hint, ':s' " +
                 "to see some words you could submit or - in the worst case - ':q' to quit (although I can't see why you would^^).");
-            Console.Out.WriteLine("\nHere are your first set of letters:");
         }
 
 
@@ -122,17 +123,15 @@ namespace ReelWords
 
         private static void LoadResourcesFromFile()
         {
-            var dictThread = new Thread(() => LoadResourceAsync(DICT_PATH, Trie.Instance.Insert));
-            var scoreThread = new Thread(() => LoadResourceAsync(SCORES_PATH, ReelsManager.Instance.InsertLetterScore));
-            var reelThread = new Thread(() => LoadResourceAsync(REELS_PATH, ReelsManager.Instance.InsertReel));
+            var threads = new Thread[THREAD_COUNT];
+            threads[0] = new Thread(() => LoadResourceAsync(DICT_PATH, Trie.Instance.Insert));
+            threads[1] = new Thread(() => LoadResourceAsync(SCORES_PATH, ReelsManager.Instance.InsertLetterScore));
+            threads[2] = new Thread(() => LoadResourceAsync(REELS_PATH, ReelsManager.Instance.InsertReel));
 
-            dictThread.Start();
-            scoreThread.Start();
-            reelThread.Start();
-
-            dictThread.Join();
-            scoreThread.Join();
-            reelThread.Join();
+            foreach (var t in threads)
+                t.Start();
+            foreach (var t in threads)
+                t.Join();
         }
 
         public static string FormatLettersForOutput(Letter[] usableLetters)
