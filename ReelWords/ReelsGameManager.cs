@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Diagnostics;
-using System.Threading.Tasks;
-using System.Threading.Tasks.Dataflow;
 using System.Threading;
+using System.Threading.Tasks.Dataflow;
 
 namespace ReelWords
 {
@@ -27,7 +26,8 @@ namespace ReelWords
             stopwatch.Start();
             LoadResourcesFromFile();
             stopwatch.Stop();
-            // Single threaded setup time: 221ms, multithreaded/dataflow: 107ms 
+
+            // Single threaded load time: 221ms, multithreaded/dataflow for worddict: 107ms 
             Console.Out.WriteLine("[Load time: " + stopwatch.ElapsedMilliseconds + "ms]");
             Console.Out.WriteLine("\nHere are your first set of letters:");
 
@@ -115,7 +115,8 @@ namespace ReelWords
             }
         }
 
-        private static void LoadResourceAsync(string fromPath, Action<string> handler) {
+        private static void LoadResourceAsync(string fromPath, Action<string> handler)
+        {
             var buffer = new BufferBlock<string>();
             ConsumeAsync(buffer, handler);
             Produce(buffer, fromPath);
@@ -133,6 +134,20 @@ namespace ReelWords
             foreach (var t in threads)
                 t.Join();
         }
+
+        // This method only uses thread + dataflow for the wordDict, which is faster than using it for all three files.
+        //private static void LoadResourcesFromFileOneThread()
+        //{
+        //    var dictThread = new Thread(() => LoadResourceAsync(DICT_PATH, Trie.Instance.Insert));
+        //    dictThread.Start();
+
+        //    foreach (var line in File.ReadLines(SCORES_PATH))
+        //        ReelsManager.Instance.InsertLetterScore(line);
+        //    foreach (var line in File.ReadLines(REELS_PATH))
+        //        ReelsManager.Instance.InsertReel(line);
+
+        //    dictThread.Join();
+        //}
 
         public static string FormatLettersForOutput(Letter[] usableLetters)
         {
