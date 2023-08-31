@@ -5,6 +5,7 @@ using System.Text;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
+using System.Threading;
 
 namespace ReelWords
 {
@@ -97,41 +98,41 @@ namespace ReelWords
         }
 
 
-        static void Produce(ITargetBlock<string> target)
+        static void Produce(ITargetBlock<string> target, string fromPath)
         {
-            var dictLines = File.ReadLines(DICT_PATH);
-            foreach (var line in dictLines) {
+            foreach (var line in File.ReadLines(fromPath))
                 target.Post(line);
-            }
             target.Complete();
         }
 
-        static async void ConsumeAsync(ISourceBlock<string> source)
+        static async void ConsumeAsync(ISourceBlock<string> source, Action<string> handler)
         {
             while (await source.OutputAvailableAsync())
             {
                 string line = await source.ReceiveAsync();
-                Trie.Instance.Insert(line.ToLower());
+                handler(line.ToLower());
             }
+        }
+
+        private static void LoadResourceAsync(string fromPath, Action<string> handler) {
+            var buffer = new BufferBlock<string>();
+            ConsumeAsync(buffer, handler);
+            Produce(buffer, fromPath);
         }
 
         private static void LoadResourcesFromFile()
         {
-            var buffer = new BufferBlock<string>();
-            ConsumeAsync(buffer);
-            Produce(buffer);
+            var dictThread = new Thread(() => LoadResourceAsync(DICT_PATH, Trie.Instance.Insert));
+            var scoreThread = new Thread(() => LoadResourceAsync(SCORES_PATH, ReelsManager.Instance.InsertLetterScore));
+            var reelThread = new Thread(() => LoadResourceAsync(REELS_PATH, ReelsManager.Instance.InsertReel));
 
-            //var dictLines = File.ReadLines(DICT_PATH);
-            //foreach (var line in dictLines)
-            //    Trie.Instance.Insert(line.ToLower());
+            dictThread.Start();
+            scoreThread.Start();
+            reelThread.Start();
 
-            var scoreLines = File.ReadLines(SCORES_PATH);
-            foreach (var line in scoreLines)
-                ReelsManager.Instance.InsertLetterScore(line.ToLower());
-
-            var reelLines = File.ReadLines(REELS_PATH);
-            foreach (var line in reelLines)
-                ReelsManager.Instance.InsertReel(line.ToLower());
+            dictThread.Join();
+            scoreThread.Join();
+            reelThread.Join();
         }
 
         public static string FormatLettersForOutput(Letter[] usableLetters)
