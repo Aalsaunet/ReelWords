@@ -97,41 +97,55 @@ namespace ReelWords
         }
 
 
-        static void Produce(ITargetBlock<string> target)
+        static void InsertInDataStore(ITargetBlock<string> dictBuffer,
+            ITargetBlock<string> scoreBuffer, ITargetBlock<string> reelBuffer)
         {
             var dictLines = File.ReadLines(DICT_PATH);
             foreach (var line in dictLines) {
-                target.Post(line);
+                dictBuffer.Post(line);
             }
-            target.Complete();
+            dictBuffer.Complete();
+
+            var scoreLines = File.ReadLines(SCORES_PATH);
+            foreach (var line in scoreLines)
+                scoreBuffer.Post(line);
+            scoreBuffer.Complete();
+
+            var reelLines = File.ReadLines(REELS_PATH);
+            foreach (var line in reelLines)
+                reelBuffer.Post(line);
+            reelBuffer.Complete();
         }
 
-        static async void ConsumeAsync(ISourceBlock<string> source)
+        static async void LoadResoucesAsync(ISourceBlock<string> dictBuffer,
+            ISourceBlock<string> scoreBuffer, ISourceBlock<string> reelBuffer)
         {
-            while (await source.OutputAvailableAsync())
+            while (await dictBuffer.OutputAvailableAsync())
             {
-                string line = await source.ReceiveAsync();
+                string line = await dictBuffer.ReceiveAsync();
                 Trie.Instance.Insert(line.ToLower());
+            }
+
+            while (await scoreBuffer.OutputAvailableAsync())
+            {
+                string line = await scoreBuffer.ReceiveAsync();
+                ReelsManager.Instance.InsertLetterScore(line.ToLower());
+            }
+
+            while (await reelBuffer.OutputAvailableAsync())
+            {
+                string line = await reelBuffer.ReceiveAsync();
+                ReelsManager.Instance.InsertReel(line.ToLower());
             }
         }
 
         private static void LoadResourcesFromFile()
         {
-            var buffer = new BufferBlock<string>();
-            ConsumeAsync(buffer);
-            Produce(buffer);
-
-            //var dictLines = File.ReadLines(DICT_PATH);
-            //foreach (var line in dictLines)
-            //    Trie.Instance.Insert(line.ToLower());
-
-            var scoreLines = File.ReadLines(SCORES_PATH);
-            foreach (var line in scoreLines)
-                ReelsManager.Instance.InsertLetterScore(line.ToLower());
-
-            var reelLines = File.ReadLines(REELS_PATH);
-            foreach (var line in reelLines)
-                ReelsManager.Instance.InsertReel(line.ToLower());
+            var dictBuffer = new BufferBlock<string>();
+            var scoreBuffer = new BufferBlock<string>();
+            var reelBuffer = new BufferBlock<string>();
+            LoadResoucesAsync(dictBuffer, scoreBuffer, reelBuffer);
+            InsertInDataStore(dictBuffer, scoreBuffer, reelBuffer);
         }
 
         public static string FormatLettersForOutput(Letter[] usableLetters)
